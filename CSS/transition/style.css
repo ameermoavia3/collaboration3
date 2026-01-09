@@ -1,0 +1,25 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+
+ 
+#ameer3   {
+    
+    height: 250px;
+    width: 250px;
+    border-radius: 50%;
+    margin-top: 100px;
+    margin-left: 300px;
+    border: 20px solid blue;
+    border-top: 20px solid black;
+    animation: ameer;
+}
+
+@keyframes ameer {
+    from { transform: rotate(0deg);}
+    to { transform: rotate(360deg); }
+}

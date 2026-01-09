@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temple Run Clone</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <script src="script.js"></script>
+</body>
+</html>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #000;
+    overflow: hidden;
+}
+
+canvas {
+    background-color: #333;
+    border: 2px solid #fff;
+}
+
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = 800;
+canvas.height = 600;
+
+// Player
+const player = {
+    x: canvas.width / 2 - 25,
+    y: canvas.height - 100,
+    width: 50,
+    height: 50,
+    color: "blue",
+    speed: 5,
+};
+
+// Obstacles
+const obstacles = [];
+let obstacleSpeed = 2;
+let spawnRate = 100; // Lower number = more frequent obstacles
+let frame = 0;
+
+// Draw player
+function drawPlayer() {
+    ctx.fillStyle = player.color;
+    ctx.fillRect(player.x, player.y, player.width, player.height);
+}
+
+// Draw obstacles
+function drawObstacles() {
+    for (let i = 0; i < obstacles.length; i++) {
+        ctx.fillStyle = "red";
+        ctx.fillRect(obstacles[i].x, obstacles[i].y, obstacles[i].width, obstacles[i].height);
+
+        // Move obstacles
+        obstacles[i].y += obstacleSpeed;
+
+        // Check for collision
+        if (
+            player.x < obstacles[i].x + obstacles[i].width &&
+            player.x + player.width > obstacles[i].x &&
+            player.y < obstacles[i].y + obstacles[i].height &&
+            player.y + player.height > obstacles[i].y
+        ) {
+            alert("Game Over!");
+            document.location.reload();
+        }
+
+        // Remove obstacles that go off-screen
+        if (obstacles[i].y > canvas.height) {
+            obstacles.splice(i, 1);
+            i--;
+        }
+    }
+}
+
+// Spawn obstacles
+function spawnObstacle() {
+    if (frame % spawnRate === 0) {
+        const width = Math.random() * 100 + 50; // Random width
+        const x = Math.random() * (canvas.width - width); // Random x position
+        obstacles.push({ x: x, y: 0, width: width, height: 20 });
+    }
+    frame++;
+}
+
+// Move player
+document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft" && player.x > 0) {
+        player.x -= player.speed;
+    }
+    if (e.key === "ArrowRight" && player.x + player.width < canvas.width) {
+        player.x += player.speed;
+    }
+});
+
+// Game loop
+function gameLoop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+
+    drawPlayer();
+    spawnObstacle();
+    drawObstacles();
+
+    requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
